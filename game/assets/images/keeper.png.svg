@@ -1,0 +1,22 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <circle cx="256" cy="256" r="250" fill="#0f172a" />
+  
+  <!-- Keeper Robe -->
+  <path d="M256,50 C180,100 150,200 256,250 L256,500 C360,450 380,250 256,250 Z" fill="#1e40af" />
+  
+  <!-- Robe Details -->
+  <path d="M256,100 C200,150 180,250 256,300 L256,450 C310,400 320,300 256,250 Z" fill="#1d4ed8" opacity="0.8" />
+  
+  <!-- Energy Orb -->
+  <circle cx="256" cy="350" r="40" fill="none" stroke="#3b82f6" stroke-width="4" />
+  <circle cx="256" cy="350" r="20" fill="#60a5fa" />
+  <circle cx="256" cy="350" r="10" fill="#93c5fd" />
+  <circle cx="256" cy="350" r="5" fill="#dbeafe" />
+  
+  <!-- Energy Lines -->
+  <path d="M256,350 L280,320" stroke="#3b82f6" stroke-width="2" />
+  <path d="M256,350 L230,330" stroke="#3b82f6" stroke-width="2" />
+  <path d="M256,350 L260,380" stroke="#3b82f6" stroke-width="2" />
+  <path d="M256,350 L225,365" stroke="#3b82f6" stroke-width="2" />
+</svg>
