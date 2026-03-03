@@ -1,0 +1,26 @@
+graph TD
+    A[Master Keeper Realm] --> B[Game Interface]
+    A --> C[API Server]
+    A --> D[Builder System]
+    
+    B --> B1[index.html]
+    B --> B2[game.js]
+    B --> B3[Master Keeper Visuals]
+    B --> B4[Worker Modules]
+    
+    C --> C1[Game-Integrated API Server]
+    C --> C2[Worker Status Engine]
+    C --> C3[Real-time Data Translator]
+    
+    D --> D1[Key Builder]
+    D --> D2[Realm Key Management]
+    D --> D3[Game Key Integration]
+    
+    C1 -->|Secure Proxy| E[Kano API]
+    B4 -->|Visual Feedback| C2
+    D2 -->|Key Orders| C1
+    
+    style A fill:#1a202c,stroke:#3b82f6
+    style B fill:#1e293b,stroke:#10b981
+    style C fill:#1e293b,stroke:#f59e0b
+    style D fill:#1e293b,stroke:#ef4444

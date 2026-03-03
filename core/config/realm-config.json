@@ -1,0 +1,38 @@
+{
+    "core": {
+      "identity": {
+        "kano_username": "Appleseed",
+        "github_owner": "ircinco-mh",
+        "enforce_separation": true
+      },
+      "api": {
+        "endpoint": "https://kano.is/index.php",
+        "encryption_level": "4096-bit RSA + DPAPI",
+        "max_connections": 5,
+        "port": 3001
+      }
+    },
+    "worker_matrix": {
+      "naming_pattern": "Appleseed.worker{ID}",
+      "max_workers": 8,
+      "min_workers": 1,
+      "display_columns": ["name", "status", "hashrate", "accepted", "rejected"],
+      "worker_ids": [1, 2, 3, 4, 5, 6, 7, 8]
+    },
+    "game_settings": {
+      "theme": "mining-realm",
+      "background": "background.jpg",
+      "keeper_image": "keeper.png",
+      "mining_sound": "mining.wav",
+      "alert_sound": "alert.wav",
+      "initial_realm_level": 1,
+      "max_realm_level": 10
+    },
+    "key_management": {
+      "max_keys": 8,
+      "key_lifespan": "30 days",
+      "rotation_policy": "rolling",
+      "auto_generate": true
+    }
+  }
+  

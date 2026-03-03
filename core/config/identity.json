@@ -1,0 +1,19 @@
+{
+    "kano_identity": {
+      "username": "Appleseed",
+      "pool": "stratum+tcp://stratum.kano.is:3333",
+      "password": "x",
+      "api_key": "738a48d70ba3ddc859e628b6bee5eba7",
+      "api_endpoint": "https://kano.is/index.php"
+    },
+    "github_identity": {
+      "username": "ircinco-mh",
+      "repo": "kano-monitor",
+      "branch": "main",
+      "documentation_path": "docs/"
+    },
+    "separation_enforced": true,
+    "last_verification": "2024-06-15T12:30:00Z",
+    "verification_method": "Digital signature and network traffic analysis"
+  }
+  

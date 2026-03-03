@@ -1,0 +1,352 @@
+:root {
+    --keeper-blue: #3b82f6;
+    --worker-green: #10b981;
+    --warning-yellow: #f59e0b;
+    --error-red: #ef4444;
+    --dark-bg: #0f172a;
+    --card-bg: #1e293b;
+  }
+  
+  body {
+    background: var(--dark-bg);
+    color: #e2e8f0;
+    font-family: 'Segoe UI', fantasy, cursive;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-image: url('../assets/images/background.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+  }
+  
+  .game-container {
+    position: relative;
+    height: 100vh;
+    width: 100%;
+  }
+  
+  .realm-header {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(10px);
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--keeper-blue);
+    position: relative;
+    z-index: 100;
+  }
+  
+  .keeper-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #3b82f6 0%, #1e40af 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    letter-spacing: 1px;
+  }
+  
+  .realm-stats {
+    display: flex;
+    gap: 25px;
+    background: rgba(30, 41, 59, 0.7);
+    padding: 10px 20px;
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+  }
+  
+  .stat-box {
+    text-align: center;
+    min-width: 120px;
+  }
+  
+  .stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--keeper-blue);
+  }
+  
+  .realm-grid {
+    display: grid;
+    grid-template-columns: 250px 1fr 300px;
+    height: calc(100vh - 100px);
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .keeper-panel {
+    background: rgba(30, 41, 59, 0.85);
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid var(--keeper-blue);
+    backdrop-filter: blur(10px);
+  }
+  
+  .keeper-avatar {
+    width: 180px;
+    height: 180px;
+    background: url('../assets/images/keeper.png') no-repeat center;
+    background-size: cover;
+    border-radius: 50%;
+    border: 4px solid var(--keeper-blue);
+    margin-bottom: 20px;
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+  }
+  
+  .keeper-status {
+    display: flex;
+    align-items: center;
+    margin: 15px 0;
+  }
+  
+  .status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+  }
+  
+  .worker-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+  
+  .worker-card {
+    background: rgba(30, 41, 59, 0.85);
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid var(--card-bg);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .worker-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+    border-color: var(--keeper-blue);
+  }
+  
+  .worker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .worker-name {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--keeper-blue);
+  }
+  
+  .worker-id {
+    background: rgba(59, 130, 246, 0.15);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 0.9rem;
+  }
+  
+  .worker-specialty {
+    background: rgba(16, 185, 129, 0.15);
+    border-radius: 8px;
+    padding: 8px 15px;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    color: var(--worker-green);
+  }
+  
+  .worker-energy {
+    background: rgba(245, 158, 11, 0.15);
+    border-radius: 8px;
+    padding: 8px 15px;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    color: var(--warning-yellow);
+  }
+  
+  .worker-visual {
+    height: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 15px 0;
+  }
+  
+  .mining-visual {
+    width: 100%;
+    height: 100%;
+    background: url('../assets/images/worker-mining.png') no-repeat center;
+    background-size: contain;
+    animation: mining-pulse 3s infinite;
+  }
+  
+  @keyframes mining-pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+  }
+  
+  @keyframes unstable-pulse {
+    0% { transform: scale(1); }
+    25% { transform: scale(0.95); }
+    50% { transform: scale(1.05); }
+    75% { transform: scale(0.95); }
+    100% { transform: scale(1); }
+  }
+  
+  .worker-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin: 15px 0;
+  }
+  
+  .stat {
+    background: rgba(15, 23, 42, 0.5);
+    border-radius: 8px;
+    padding: 10px;
+  }
+  
+  .stat-label {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin-bottom: 3px;
+  }
+  
+  .stat-value {
+    font-weight: 600;
+  }
+  
+  .worker-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+  }
+  
+  .action-btn {
+    background: var(--keeper-blue);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+    flex: 1;
+  }
+  
+  .action-btn:hover {
+    background: #2563eb;
+  }
+  
+  .control-panel {
+    background: rgba(30, 41, 59, 0.85);
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid var(--keeper-blue);
+    backdrop-filter: blur(10px);
+  }
+  
+  .panel-title {
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+    color: var(--keeper-blue);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .key-section {
+    background: rgba(15, 23, 42, 0.5);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .key-value {
+    background: rgba(30, 41, 59, 0.7);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-family: monospace;
+    font-size: 0.9rem;
+    overflow-x: auto;
+    margin: 10px 0;
+  }
+  
+  .control-btn {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .primary-btn {
+    background: var(--keeper-blue);
+    color: white;
+  }
+  
+  .warning-btn {
+    background: var(--warning-yellow);
+    color: #1e293b;
+  }
+  
+  .game-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+    flex-direction: column;
+    display: none;
+  }
+  
+  .loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 5px solid rgba(59, 130, 246, 0.3);
+    border-top: 5px solid var(--keeper-blue);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .footer {
+    position: absolute;
+    bottom: 15px;
+    width: 100%;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #64748b;
+    padding: 0 30px;
+  }
+  
+  .status-online .status-dot { background: var(--worker-green); }
+  .status-unstable .status-dot { background: var(--warning-yellow); }
+  .status-dead .status-dot { background: var(--error-red); }
+  
+  .status-online .mining-visual { animation: mining-pulse 2s infinite; }
+  .status-unstable .mining-visual { animation: unstable-pulse 4s infinite; }
+  .status-dead .mining-visual { animation: none; opacity: 0.5; }
+  

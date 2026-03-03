@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Master Keeper Realm - Appleseed Mining Operation</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="styles/game-theme.css">
+    <style>
+        :root {
+            --keeper-blue: #3b82f6;
+            --worker-green: #10b981;
+            --warning-yellow: #f59e0b;
+            --error-red: #ef4444;
+            --dark-bg: #0f172a;
+            --card-bg: #1e293b;
+        }
+        
+        body {
+            background: var(--dark-bg);
+            color: #e2e8f0;
+            font-family: 'Segoe UI', fantasy, cursive;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-image: url('assets/images/background.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+        }
+        
+        .game-container {
+            position: relative;
+            height: 100vh;
+            width: 100%;
+        }
+        
+        .realm-header {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--keeper-blue);
+            position: relative;
+            z-index: 100;
+        }
+        
+        .keeper-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #3b82f6 0%, #1e40af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            letter-spacing: 1px;
+        }
+        
+        .realm-stats {
+            display: flex;
+            gap: 25px;
+            background: rgba(30, 41, 59, 0.7);
+            padding: 10px 20px;
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .stat-box {
+            text-align: center;
+            min-width: 120px;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--keeper-blue);
+        }
+        
+        .realm-grid {
+            display: grid;
+            grid-template-columns: 250px 1fr 300px;
+            height: calc(100vh - 100px);
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        .keeper-panel {
+            background: rgba(30, 41, 59, 0.85);
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid var(--keeper-blue);
+            backdrop-filter: blur(10px);
+        }
+        
+        .keeper-avatar {
+            width: 180px;
+            height: 180px;
+            background: url('assets/images/keeper.png') no-repeat center;
+            background-size: cover;
+            border-radius: 50%;
+            border: 4px solid var(--keeper-blue);
+            margin-bottom: 20px;
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+        }
+        
+        .keeper-status {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .worker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .worker-card {
+            background: rgba(30, 41, 59, 0.85);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid var(--card-bg);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .worker-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+            border-color: var(--keeper-blue);
+        }
+        
+        .worker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .worker-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--keeper-blue);
+        }
+        
+        .worker-id {
+            background: rgba(59, 130, 246, 0.15);
+            border-radius: 20px;
+            padding: 5px 12px;
+            font-size: 0.9rem;
+        }
+        
+        .worker-visual {
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 15px 0;
+        }
+        
+        .mining-visual {
+            width: 100%;
+            height: 100%;
+            background: url('assets/images/worker-mining.png') no-repeat center;
+            background-size: contain;
+            animation: mining-pulse 3s infinite;
+        }
+        
+        @keyframes mining-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+        
+        .worker-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .stat {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 8px;
+            padding: 10px;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 3px;
+        }
+        
+        .stat-value {
+            font-weight: 600;
+        }
+        
+        .worker-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .action-btn {
+            background: var(--keeper-blue);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            flex: 1;
+        }
+        
+        .action-btn:hover {
+            background: #2563eb;
+        }
+        
+        .control-panel {
+            background: rgba(30, 41, 59, 0.85);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid var(--keeper-blue);
+            backdrop-filter: blur(10px);
+        }
+        
+        .panel-title {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: var(--keeper-blue);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .key-section {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .key-value {
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        
+        .control-btn {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .primary-btn {
+            background: var(--keeper-blue);
+            color: white;
+        }
+        
+        .warning-btn {
+            background: var(--warning-yellow);
+            color: #1e293b;
+        }
+        
+        .game-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            flex-direction: column;
+            display: none;
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(59, 130, 246, 0.3);
+            border-top: 5px solid var(--keeper-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .footer {
+            position: absolute;
+            bottom: 15px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #64748b;
+            padding: 0 30px;
+        }
+        
+        .status-online .status-dot { background: var(--worker-green); }
+        .status-unstable .status-dot { background: var(--warning-yellow); }
+        .status-dead .status-dot { background: var(--error-red); }
+        
+        .status-online .mining-visual { animation: mining-pulse 2s infinite; }
+        .status-unstable .mining-visual { animation: unstable-pulse 4s infinite; }
+        .status-dead .mining-visual { animation: none; opacity: 0.5; }
+        
+        @keyframes unstable-pulse {
+            0% { transform: scale(1); }
+            25% { transform: scale(0.95); }
+            50% { transform: scale(1.05); }
+            75% { transform: scale(0.95); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="realm-header">
+            <h1 class="keeper-title">Master Keeper Realm</h1>
+            <div class="realm-stats">
+                <div class="stat-box">
+                    <div class="stat-label">Total Hashrate</div>
+                    <div class="stat-value" id="total-hash">0.00 MH/s</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Active Workers</div>
+                    <div class="stat-value" id="active-workers">0/8</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">System Health</div>
+                    <div class="stat-value" id="system-health" style="color: var(--warning-yellow)">75%</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="realm-grid">
+            <div class="keeper-panel">
+                <div class="keeper-avatar"></div>
+                <h2 style="color: var(--keeper-blue); margin: 10px 0">Master Keeper</h2>
+                <p style="text-align: center; color: #94a3b8">Command the mining realm</p>
+                
+                <div class="keeper-status">
+                    <span class="status-dot" style="background: var(--keeper-blue);"></span>
+                    <span>Realm Guardian</span>
+                </div>
+                
+                <div class="keeper-stats" style="margin-top: 20px">
+                    <div class="stat-box">
+                        <div class="stat-label">Realm Level</div>
+                        <div class="stat-value">5</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Keys Held</div>
+                        <div class="stat-value" id="keys-held">8/8</div>
+                    </div>
+                </div>
+                
+                <div class="keeper-actions" style="margin-top: 25px; width: 100%">
+                    <button class="action-btn" id="refresh-realm">Refresh Realm</button>
+                </div>
+            </div>
+            
+            <div class="worker-grid" id="workers-container">
+                <!-- Workers will load here -->
+            </div>
+            
+            <div class="control-panel">
+                <h2 class="panel-title">⚠️ Realm Control</h2>
+                
+                <div class="key-section">
+                    <div class="stat-label">Master Key (API)</div>
+                    <div class="key-value" id="api-key-display">••••••••••••••••••••••••••••••••</div>
+                    <button id="toggle-key" class="action-btn" style="margin-top: 10px; background: var(--warning-yellow); color: #1e293b;">REVEAL KEY</button>
+                </div>
+                
+                <div class="control-section">
+                    <button class="control-btn primary-btn" id="generate-keys">
+                        <i class="fas fa-key"></i> Generate Realm Keys
+                    </button>
+                    <button class="control-btn warning-btn" id="activate-realm">
+                        <i class="fas fa-shield-alt"></i> Activate Full Realm
+                    </button>
+                    <button class="control-btn primary-btn" id="diagnostic-scan">
+                        <i class="fas fa-microscope"></i> Diagnostic Scan
+                    </button>
+                    <button class="control-btn warning-btn" id="emergency-protocol">
+                        <i class="fas fa-exclamation-triangle"></i> Emergency Protocol
+                    </button>
+                </div>
+                
+                <div class="realm-alerts" style="margin-top: 25px">
+                    <h3 style="color: var(--warning-yellow); margin-bottom: 10px">Realm Alerts</h3>
+                    <div id="alert-container">
+                        <div class="alert" style="background: rgba(239, 68, 68, 0.2); border-left: 4px solid var(--error-red); padding: 10px; margin-bottom: 10px; border-radius: 4px;">
+                            Worker 5 is offline - check connection
+                        </div>
+                        <div class="alert" style="background: rgba(16, 185, 129, 0.2); border-left: 4px solid var(--worker-green); padding: 10px; margin-bottom: 10px; border-radius: 4px;">
+                            Realm stability at 87% - good condition
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            Master Keeper Realm v3.2 | Appleseed Mining Operation | <span id="current-time">12:30 PM</span>
+        </div>
+        
+        <div class="game-overlay" id="loading-overlay">
+            <div class="loading-spinner"></div>
+            <div style="text-align: center">
+                <h3 style="color: white; margin-bottom: 10px">Connecting to Mining Realm</h3>
+                <p style="color: #94a3b8">Establishing secure connection to Kano API...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Master Keeper Realm Configuration
+        const REALM_CONFIG = {
+            username: "Appleseed",
+            apiKey: "738a48d70ba3ddc859e628b6bee5eba7",
+            maxWorkers: 8,
+            poolUrl: "https://kano.is/index.php",
+            workerPattern: "Appleseed.worker{ID}",
+            gameVersion: "3.2"
+        };
+        
+        // Game State
+        const gameState = {
+            workers: [],
+            totalHashrate: 0,
+            activeCount: 0,
+            systemHealth: 100,
+            apiActive: false
+        };
+        
+        // Initialize the Realm
+        document.addEventListener('DOMContentLoaded', function() {
+            showLoading();
+            
+            // Set up event listeners
+            document.getElementById('refresh-realm').addEventListener('click', refreshRealm);
+            document.getElementById('toggle-key').addEventListener('click', toggleApiKey);
+            document.getElementById('generate-keys').addEventListener('click', generateRealmKeys);
+            document.getElementById('activate-realm').addEventListener('click', activateFullRealm);
+            document.getElementById('diagnostic-scan').addEventListener('click', runDiagnostic);
+            document.getElementById('emergency-protocol').addEventListener('click', emergencyProtocol);
+            
+            // Initial realm setup
+            setTimeout(() => {
+                initializeRealm();
+                hideLoading();
+            }, 1500);
+        });
+        
+        // Loading State
+        function showLoading() {
+            document.getElementById('loading-overlay').style.display = 'flex';
+        }
+        
+        function hideLoading() {
+            document.getElementById('loading-overlay').style.display = 'none';
+        }
+        
+        // Initialize the Master Keeper Realm
+        function initializeRealm() {
+            // Update time display
+            updateTimeDisplay();
+            setInterval(updateTimeDisplay, 1000);
+            
+            // Initial data load
+            loadWorkerData();
+            updateRealmStats();
+            
+            // Set up auto-refresh
+            setInterval(refreshRealm, 30000);
+        }
+        
+        // Update time display
+        function updateTimeDisplay() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const displayHours = hours % 12 || 12;
+            
+            document.getElementById('current-time').textContent = 
+                `${displayHours}:${minutes} ${ampm}`;
+        }
+        
+        // Load worker data from Kano API
+        async function loadWorkerData() {
+            try {
+                const workersUrl = `${REALM_CONFIG.poolUrl}?k=api&username=${REALM_CONFIG.username}&api=${REALM_CONFIG.apiKey}&json=y&work=y`;
+                const response = await fetch(workersUrl);
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                // Process worker data
+                gameState.workers = processWorkerData(data);
+                renderWorkers();
+                updateRealmStats();
+                
+                // Update system health
+                updateSystemHealth();
+                
+            } catch (error) {
+                console.error("Realm connection error:", error);
+                addAlert(`Connection issue: ${error.message}`, 'error');
+                
+                // Use cached data if available
+                if (localStorage.getItem('realm-cache')) {
+                    const cached = JSON.parse(localStorage.getItem('realm-cache'));
+                    gameState.workers = cached.workers;
+                    renderWorkers();
+                    updateRealmStats();
+                }
+            }
+        }
+        
+        // Process worker data for game integration
+        function processWorkerData(apiData) {
+            if (!apiData.workers) return [];
+            
+            // Filter and limit to 8 workers
+            let workers = apiData.workers
+                .filter(w => w.name.includes(REALM_CONFIG.username))
+                .slice(0, REALM_CONFIG.maxWorkers);
+            
+            // Add missing workers (up to 8)
+            while (workers.length < REALM_CONFIG.maxWorkers) {
+                const id = workers.length + 1;
+                workers.push({
+                    name: REALM_CONFIG.workerPattern.replace('{ID}', id),
+                    hashrate: 0,
+                    accepted: 0,
+                    rejected: 0,
+                    status: 'offline',
+                    last_share: 0
+                });
+            }
+            
+            // Calculate stats
+            gameState.totalHashrate = workers.reduce((sum, w) => sum + (parseFloat(w.hashrate) || 0), 0);
+            gameState.activeCount = workers.filter(w => w.status === 'online').length;
+            
+            // Cache for offline use
+            localStorage.setItem('realm-cache', JSON.stringify({
+                workers: workers,
+                timestamp: new Date().toISOString()
+            }));
+            
+            return workers;
+        }
+        
+        // Render workers in the game interface
+        function renderWorkers() {
+            const container = document.getElementById('workers-container');
+            container.innerHTML = '';
+            
+            gameState.workers.forEach((worker, index) => {
+                const statusClass = worker.status === 'online' ? 'status-online' : 
+                                  worker.status === 'unstable' ? 'status-unstable' : 'status-dead';
+                
+                const workerCard = document.createElement('div');
+                workerCard.className = `worker-card ${statusClass}`;
+                workerCard.innerHTML = `
+                    <div class="worker-header">
+                        <div class="worker-name">${worker.name}</div>
+                        <div class="worker-id">ID: ${index + 1}</div>
+                    </div>
+                    
+                    <div class="worker-visual">
+                        <div class="mining-visual"></div>
+                    </div>
+                    
+                    <div class="worker-stats">
+                        <div class="stat">
+                            <div class="stat-label">Hashrate</div>
+                            <div class="stat-value">${worker.hashrate || '0.00'} H/s</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Accepted</div>
+                            <div class="stat-value">${worker.accepted || 0}</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Rejected</div>
+                            <div class="stat-value">${worker.rejected || 0}</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Last Share</div>
+                            <div class="stat-value">${formatLastShare(worker.last_share)}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="worker-actions">
+                        <button class="action-btn" data-action="details" data-worker="${index}">Details</button>
+                        <button class="action-btn" data-action="repair" data-worker="${index}">Repair</button>
+                    </div>
+                `;
+                
+                container.appendChild(workerCard);
+            });
+            
+            // Add event listeners to repair buttons
+            document.querySelectorAll('[data-action="repair"]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const workerIndex = this.getAttribute('data-worker');
+                    repairWorker(workerIndex);
+                });
+            });
+        }
+        
+        // Format last share timestamp
+        function formatLastShare(timestamp) {
+            if (!timestamp) return 'Never';
+            
+            const date = new Date(timestamp * 1000);
+            const now = new Date();
+            const diff = now - date;
+            
+            const seconds = Math.floor(diff / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            
+            if (hours > 0) return `${hours}h ago`;
+            if (minutes > 0) return `${minutes}m ago`;
+            return `${seconds}s ago`;
+        }
+        
+        // Update realm statistics
+        function updateRealmStats() {
+            document.getElementById('total-hash').textContent = 
+                `${gameState.totalHashrate.toFixed(2)} MH/s`;
+                
+            document.getElementById('active-workers').textContent = 
+                `${gameState.activeCount}/${REALM_CONFIG.maxWorkers}`;
+                
+            document.getElementById('keys-held').textContent = 
+                `${gameState.activeCount}/${REALM_CONFIG.maxWorkers}`;
+        }
+        
+        // Update system health
+        function updateSystemHealth() {
+            const health = Math.max(25, 100 - (REALM_CONFIG.maxWorkers - gameState.activeCount) * 10);
+            gameState.systemHealth = health;
+            
+            const healthElement = document.getElementById('system-health');
+            healthElement.textContent = `${health}%`;
+            
+            if (health > 75) {
+                healthElement.style.color = 'var(--worker-green)';
+            } else if (health > 50) {
+                healthElement.style.color = 'var(--warning-yellow)';
+            } else {
+                healthElement.style.color = 'var(--error-red)';
+            }
+        }
+        
+        // Toggle API key visibility
+        function toggleApiKey() {
+            const keyDisplay = document.getElementById('api-key-display');
+            const toggleBtn = document.getElementById('toggle-key');
+            
+            if (keyDisplay.textContent.includes('•')) {
+                keyDisplay.textContent = REALM_CONFIG.apiKey;
+                toggleBtn.textContent = "HIDE KEY";
+                toggleBtn.style.background = 'var(--error-red)';
+                toggleBtn.style.color = 'white';
+            } else {
+                keyDisplay.textContent = '••••••••••••••••••••••••••••••••';
+                toggleBtn.textContent = "REVEAL KEY";
+                toggleBtn.style.background = 'var(--warning-yellow)';
+                toggleBtn.style.color = '#1e293b';
+            }
+        }
+        
+        // Refresh realm data
+        function refreshRealm() {
+            showLoading();
+            loadWorkerData().then(() => {
+                hideLoading();
+                addAlert('Realm refreshed successfully', 'success');
+            });
+        }
+        
+        // Generate realm keys
+        function generateRealmKeys() {
+            showLoading();
+            setTimeout(() => {
+                addAlert('Generating 8 realm keys...', 'info');
+                
+                // Simulate key generation
+                setTimeout(() => {
+                    addAlert('All 8 realm keys generated and distributed', 'success');
+                    hideLoading();
+                }, 1500);
+            }, 500);
+        }
+        
+        // Activate full realm
+        function activateFullRealm() {
+            showLoading();
+            setTimeout(() => {
+                addAlert('Activating full realm protocols...', 'info');
+                
+                // Simulate activation
+                setTimeout(() => {
+                    gameState.apiActive = true;
+                    addAlert('Realm fully activated - mining at maximum efficiency', 'success');
+                    updateRealmStats();
+                    hideLoading();
+                }, 2000);
+            }, 500);
+        }
+        
+        // Run diagnostic scan
+        function runDiagnostic() {
+            showLoading();
+            addAlert('Starting realm diagnostic scan...', 'info');
+            
+            // Simulate scan
+            setTimeout(() => {
+                addAlert('Diagnostic complete: All systems nominal', 'success');
+                addAlert('Found 1 unstable connection - repairing...', 'info');
+                
+                // Simulate repair
+                setTimeout(() => {
+                    addAlert('Connection repaired - realm stability improved', 'success');
+                    hideLoading();
+                }, 1500);
+            }, 1000);
+        }
+        
+        // Emergency protocol
+        function emergencyProtocol() {
+            showLoading();
+            addAlert('EMERGENCY PROTOCOL ENGAGED', 'error');
+            
+            // Simulate emergency actions
+            setTimeout(() => {
+                addAlert('Isolating unstable workers...', 'info');
+                setTimeout(() => {
+                    addAlert('Re-routing power to critical systems...', 'info');
+                    setTimeout(() => {
+                        addAlert('Realm stabilized - returning to normal operations', 'success');
+                        hideLoading();
+                    }, 1000);
+                }, 1000);
+            }, 500);
+        }
+        
+        // Repair worker
+        function repairWorker(workerIndex) {
+            const worker = gameState.workers[workerIndex];
+            addAlert(`Repairing ${worker.name}...`, 'info');
+            
+            // Simulate repair
+            showLoading();
+            setTimeout(() => {
+                // Change status to online
+                gameState.workers[workerIndex].status = 'online';
+                gameState.workers[workerIndex].hashrate = (Math.random() * 10 + 5).toFixed(2);
+                gameState.workers[workerIndex].last_share = Math.floor(Date.now() / 1000);
+                
+                renderWorkers();
+                updateRealmStats();
+                updateSystemHealth();
+                
+                addAlert(`${worker.name} repaired and back online`, 'success');
+                hideLoading();
+            }, 1500);
+        }
+        
+        // Add alert to the realm
+        function addAlert(message, type) {
+            const alertContainer = document.getElementById('alert-container');
+            const alert = document.createElement('div');
+            
+            let bgColor, borderColor;
+            switch(type) {
+                case 'success':
+                    bgColor = 'rgba(16, 185, 129, 0.2)';
+                    borderColor = 'var(--worker-green)';
+                    break;
+                case 'error':
+                    bgColor = 'rgba(239, 68, 68, 0.2)';
+                    borderColor = 'var(--error-red)';
+                    break;
+                default:
+                    bgColor = 'rgba(245, 158, 11, 0.2)';
+                    borderColor = 'var(--warning-yellow)';
+            }
+            
+            alert.style.cssText = `
+                background: ${bgColor};
+                border-left: 4px solid ${borderColor};
+                padding: 10px;
+                margin-bottom: 10px;
+                border-radius: 4px;
+                animation: fadeAlert 3s forwards;
+            `;
+            
+            alert.textContent = message;
+            alertContainer.prepend(alert);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.style.opacity = '0';
+                    setTimeout(() => {
+                        if (alert.parentNode) {
+                            alertContainer.removeChild(alert);
+                        }
+                    }, 500);
+                }
+            }, 5000);
+        }
+        
+        // Game initialization
+        function initGame() {
+            // Add game-specific functionality here
+            console.log("Master Keeper Realm initialized");
+            
+            // Example: Add subtle animation effects
+            document.body.style.transition = 'background 2s ease';
+            
+            // You could add more game mechanics here
+            // - Power management
+            // - Realm upgrades
+            // - Worker special abilities
+        }
+        
+        // Start the game
+        initGame();
+    </script>
+</body>
+</html>
